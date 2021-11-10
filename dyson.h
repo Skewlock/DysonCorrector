@@ -25,6 +25,9 @@ enum types {
 int	get_size(int n);
 char	*f_itoa(int n);
 char *f_strcat(char *dest, char *src);
+char    *genString();
+int genInt();
+int *genIntTab();
 
 
 #endif
