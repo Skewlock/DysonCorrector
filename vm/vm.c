@@ -85,13 +85,13 @@ int main(void)
             
             case OP_STR:
                 memoryWrite((reg[R_IR] & 0x00FFFFFFFF000000) >> 24, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 1, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 2, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 3, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 4, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 5, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 6, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
-                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 7, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 56);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 1, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 48);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 2, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 40);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 3, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 32);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 4, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 24);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 5, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 16);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 6, reg[(reg[R_IR] & 0x0000000000F00000) >> 20] >> 8);
+                memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 7, reg[(reg[R_IR] & 0x0000000000F00000) >> 20]);
                 break;
 
             case OP_STO:
@@ -99,7 +99,8 @@ int main(void)
                 break;
             
             case OP_LDO:
-                reg[reg[R_IR] & 0x0000000000F00000 memoryRead()
+                reg[(reg[R_IR] & 0x0000000000F00000) >> 20] = memoryRead(reg[R_IR] & 0x00FFFFFFFF000000);
+                break;
 
             case OP_EQU:
                 if (reg[(reg[R_IR] & 0x00F0000000000000) >> 52] != (reg[R_IR] & 0x000FF00000000000) >> 44)
