@@ -16,13 +16,21 @@ enum {
     R_R7,
     R_R8,
     R_R9,
-    R_CR,   // carry register
     R_PC,   // program counter
     R_IR,   // Instruction Register
     R_SP,   // Stack Pointer
     R_LR,   // Link register
+    R_SR,   // Status register
     R_COUNT
 };
+
+/*
+                                                                                N C
+                                                                                | |
+SR = 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000
+                                                                                 | |
+                                                                                 Z V
+*/
 
 /*
     a          =   Register a (R_Ra)
@@ -45,14 +53,14 @@ enum {
     
     //flow instructions
     OP_JMP = 0x2000000000000000, //0x20NNNNNNNN000000   Jump to the address
-    //OP_BRL = 0x2100000000000000, //0x21NNNNNNNN000000   Go to subroutine pointed by the address
-    //OP_BRX = 0x2200000000000000, //0x2200000000000000   Return to the main routine
+    OP_BRL = 0x2100000000000000, //0x21NNNNNNNN000000   Go to subroutine pointed by the address
+    OP_BRX = 0x2200000000000000, //0x2200000000000000   Return to the main routine
 
     //RAM instructions
-    OP_ADR = 0x3000000000000000, //0x30NNNNNNNN000000   Set R_ADR to the address given
-    OP_LDR = 0x3100000000000000, //0x31NNNNNNNNa00000   Load in Ra the value at the given addrqess
-    OP_STR = 0x3200000000000000, //0x32NNNNNNNNa00000   Store in RAM the value of Ra in the given address and following
-    OP_STO = 0x3300000000000000, //0x33NNNNNNNNa00000   Store a byte
+    OP_LDR = 0x3000000000000000, //0x31NNNNNNNNa00000   Load in Ra the value at the given addrqess
+    OP_STR = 0x3100000000000000, //0x32NNNNNNNNa00000   Store in RAM the value of Ra in the given address and following
+    OP_STB = 0x3200000000000000, //0x33NNNNNNNNa00000   Store a byte in the given address 
+    OP_LDB = 0x3300000000000000, //0x34NNNNNNNNa00000   Load a byte from the given address
 
     //conditionnal instructions
     OP_EQU = 0x4000000000000000, //0x40aXX00000000000   Skip the next instruction if Ra != XX

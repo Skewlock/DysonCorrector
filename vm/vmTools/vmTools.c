@@ -6,8 +6,8 @@
 extern byte *memory;
 extern uint64 *reg;
 const char program[] = {0x12, 0x31, 0x70, 0x00, 0x00, 0x00, 0x00, 0x00,
-                        0x31, 0x79, 0x99, 0x99, 0x90, 0x50, 0x00, 0x00,
-                        0x00, 0x4f, 0xe4, 0x68, 0xab, 0x30, 0x00, 0x00,
+                        0x12, 0x49, 0x99, 0x99, 0x90, 0x50, 0x00, 0x00,
+                        0x10, 0x34, 0x00, 0x68, 0xab, 0x30, 0x00, 0x00,
                         0x00, 0x45, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                         0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 int program_size = 40;
@@ -15,23 +15,21 @@ int program_size = 40;
 void init(void)
 // initialize the vm
 {
+    printf("Initialization:\n----------\n");
+    printf("[!]: Loading %d bytes of memory\n", RAM_SIZE);
     memory = malloc(RAM_SIZE * sizeof(byte));
-    printf("%d\n", R_COUNT);
+    printf("[!]: Loading %d 32 bits registers\n", R_COUNT);
     reg = malloc(R_COUNT * sizeof(uint64));
     for (int i = 0; i < R_COUNT; i++)
     {
+        printf("[!]: Initialize R%d at 0\n", i);
         reg[i] = 0;
     }
+    printf("[!]: Loading program\n");
     loadProgram();
+    printf("Loading stack pointer on 0xFFFFFFFF\n");
     reg[R_SP] = 0xFFFFFFFF;
-    memory[0x79999990] = 0x12;
-    memory[0x79999991] = 0x23;
-    memory[0x79999992] = 0x34;
-    memory[0x79999993] = 0x45;
-    memory[0x79999994] = 0x56;
-    memory[0x79999995] = 0x67;
-    memory[0x79999996] = 0x78;
-    memory[0x79999997] = 0x89;
+    printf("\nReady !\n\n----------\n");
 }
 
 void loadProgram(void)
@@ -46,8 +44,11 @@ void loadProgram(void)
 void shutdown(void)
 // shutdown the vm
 {
+    printf("Freeing memory and registers\n");
     free(memory);
     free(reg);
+    printf("Shutting down the VM\n");
+    exit(0);
 }
 
 uint64 memoryRead(uint64 adress)
@@ -64,10 +65,12 @@ void memoryWrite(uint64 adress, byte value)
 
 void displayRegisters(void)
 {
+    printf("Displaying all registers:\n");
     for (int i = 0; i < R_COUNT; i++)
     {
         printf("R %d\t:\t0x%lX\n", i, reg[i]);
     }
+    printf("\n");
 }
 
 uint64 loadInstruction(void)

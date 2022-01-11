@@ -15,7 +15,7 @@ int main(void)
     while (running)
     {
         reg[R_IR] = loadInstruction();
-        printf("Executing instruction: 0x%lX\n", reg[R_IR]);
+        fprintf(stdin, "Executing instruction: 0x%lX\n", reg[R_IR]);
         switch (reg[R_IR] & 0xFF00000000000000)
         {
             case OP_NOP:
@@ -28,18 +28,18 @@ int main(void)
             case OP_ADD:
                 // check the carry
                 if (reg[(reg[R_IR] & 0x00F0000000000000) >> 52] > (0xFF - ((reg[R_IR] & 0x000F000000000000) >> 48)))
-                    reg[R_CR] = 1; // carry register
+                    reg[R_SR] = reg[R_SR] | (1 << 2);
                 else 
-                    reg[R_CR] = 0;
+                    reg[R_SR] = reg[R_SR] & (0 << 2);
                 reg[(reg[R_IR] & 0x00F0000000000000) >> 52] += reg[(reg[R_IR] & 0x000F000000000000) >> 48];
                 break;
             
             case OP_SUB:
                 // check the carry
                 if (reg[(reg[R_IR] & 0x00F0000000000000) >> 52] < reg[(reg[R_IR] & 0x000F000000000000) >> 48])
-                    reg[R_CR] = 1; // carry register
+                    reg[R_SR] = reg[R_SR] | (1 << 2);
                 else
-                    reg[R_CR] = 0;
+                    reg[R_SR] = reg[R_SR] & (0 << 2);
                 reg[(reg[R_IR] & 0x00F0000000000000) >> 52] -= reg[(reg[R_IR] & 0x000F000000000000) >> 48]; 
                 break;
             
@@ -49,10 +49,6 @@ int main(void)
 
             case OP_ADC:
                 reg[(reg[R_IR] & 0x00F0000000000000) >> 52] += (reg[R_IR] & 0x000FF00000000000) >> 44;
-                break;
-            
-            case OP_ADR:
-                reg[R_ADR] = (reg[R_IR] & 0x00FFFFFFFF000000) >> 24;
                 break;
 
             case OP_MOV:
@@ -94,11 +90,11 @@ int main(void)
                 memoryWrite(((reg[R_IR] & 0x00FFFFFFFF000000) >> 24) + 7, reg[(reg[R_IR] & 0x0000000000F00000) >> 20]);
                 break;
 
-            case OP_STO:
-                memoryWrite((reg[R_IR] & 0x00FFFFFFFF000000) >> 24, reg[(reg[R_IR] & 0x0000000000F00000) >> 20]);
+            case OP_STB:
+                memoryWrite((reg[R_IR] & 0x00FFFFFFFF000000) >> 24, (reg[(reg[R_IR] & 0x0000000000F00000) >> 20] & 0x00000000000000FF));
                 break;
             
-            case OP_LDO:
+            case OP_LDB:
                 reg[(reg[R_IR] & 0x0000000000F00000) >> 20] = memoryRead(reg[R_IR] & 0x00FFFFFFFF000000);
                 break;
 
@@ -130,8 +126,8 @@ int main(void)
                 break;
 
             default:
-                printf("Unknown OpCode: 0x%lX\n", reg[R_IR]);
-                exit(0);
+                fprintf(stderr, "Error: unknown opcode: 0x%lX\nShutting down the vm.\n", reg[R_IR]);
+                shutdown();
                 break;
         }
         displayRegisters();
