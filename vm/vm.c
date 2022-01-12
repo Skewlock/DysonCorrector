@@ -15,7 +15,7 @@ int main(void)
     while (running)
     {
         reg[R_IR] = loadInstruction();
-        fprintf(stdin, "Executing instruction: 0x%lX\n", reg[R_IR]);
+        printf("Executing instruction: 0x%lX\n", reg[R_IR]);
         switch (reg[R_IR] & 0xFF00000000000000)
         {
             case OP_NOP:
@@ -26,12 +26,28 @@ int main(void)
                 break;
 
             case OP_ADD:
-                // check the carry
-                if (reg[(reg[R_IR] & 0x00F0000000000000) >> 52] > (0xFF - ((reg[R_IR] & 0x000F000000000000) >> 48)))
-                    reg[R_SR] = reg[R_SR] | (1 << 2);
-                else 
-                    reg[R_SR] = reg[R_SR] & (0 << 2);
+                //C
+                if (reg[(reg[R_IR] & 0x00F0000000000000) >> 52] > (0xFFFFFFFFFFFFFFFF - (reg[(reg[R_IR] & 0x000F000000000000) >> 48])))
+                    reg[R_SR] = reg[R_SR] | 0x0000000000000002;
+                else
+                    reg[R_SR] = reg[R_SR] & 0xFFFFFFFFFFFFFFFD;
+
                 reg[(reg[R_IR] & 0x00F0000000000000) >> 52] += reg[(reg[R_IR] & 0x000F000000000000) >> 48];
+
+                //Z
+                if ((reg[(reg[R_IR] & 0x00F0000000000000) >> 52] == 0) && ((reg[R_SR] & 0x0000000000000002) == 0))
+                    reg[R_SR] = reg[R_SR] | 0x0000000000000004;
+                else
+                    reg[R_SR] = reg[R_SR] & 0xFFFFFFFFFFFFFFFB;
+
+                //N
+                if ((reg[(reg[R_IR] & 0x00F0000000000000) >> 52] & 0x8000000000000000) >> 63 == 1)
+                    reg[R_SR] = reg[R_SR] | 0x0000000000000008;
+                else
+                    reg[R_SR] = reg[R_SR] & 0xFFFFFFFFFFFFFFF7;
+                
+                //V
+                
                 break;
             
             case OP_SUB:
